@@ -96,7 +96,53 @@ class TaskHandler(http.server.BaseHTTPRequestHandler):
     manager = TaskManager()
 
     def do_GET(self):
-        if self.path == '/tasks':
+        if self.path == '/':
+            # Формируем структуру ответа
+            api_info = {
+                "api": [
+                    {
+                        "method": "GET",
+                        "endpoint": "/",
+                        "description": "Главная страница API — возвращает список доступных эндпоинтов",
+                        "response": "JSON с описанием всех API-методов"
+                    },
+                    {
+                        "method": "GET",
+                        "endpoint": "/tasks",
+                        "description": "Получить список всех задач",
+                        "response": "Массив JSON-объектов с полями: id, title, priority, isDone, vulnerability_found"
+                    },
+                    {
+                        "method": "POST",
+                        "endpoint": "/tasks",
+                        "description": "Создать новую задачу",
+                        "request_body": {
+                            "title": "string",
+                            "priority": "string (low/normal/high)"
+                        },
+                        "response": "JSON-объект созданной задачи с полями: id, title, priority, isDone, vulnerability_found"
+                    },
+                    {
+                        "method": "POST",
+                        "endpoint": "/tasks/{id}/complete",
+                        "description": "Отметить задачу как выполненную",
+                        "params": {
+                            "id": "число (ID задачи)"
+                        },
+                        "response": "200 OK при успехе, 404 если задача не найдена"
+                    }
+                ]
+            }
+
+            # Преобразуем словарь в JSON-строку
+            message = json.dumps(api_info, ensure_ascii=False, indent=4)
+
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(message.encode('utf-8'))
+
+        elif self.path == '/tasks':
             self.handle_get_tasks()
         else:
             self.send_error(404)
