@@ -10,6 +10,7 @@ TASKS_FILE = 'tasks.txt'
 # Список задач (в памяти)
 tasks = []
 
+
 def load_tasks():
     """Загружает задачи из файла при старте сервера."""
     if os.path.exists(TASKS_FILE):
@@ -20,6 +21,7 @@ def load_tasks():
                     tasks.extend(json.loads(data))
         except (json.JSONDecodeError, IOError):
             print(f"Ошибка при чтении {TASKS_FILE}. Начинаем с пустого списка.")
+
 
 def save_tasks():
     """Сохраняет текущий список задач в файл."""
